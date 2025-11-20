@@ -1,0 +1,119 @@
+﻿- type: entity
+  id: BaseCyberneticOrganUnGibbable
+  parent: BaseItem
+  abstract: true
+  components:
+  - type: Sprite
+    sprite: Mobs/Species/Human/organs.rsi
+  - type: Organ
+
+- type: entity
+  id: BaseCyberneticOrgan
+  parent: BaseCyberneticOrganUnGibbable
+  abstract: true
+  components:
+  - type: Gibbable
+
+# CyberwareCoprocessors
+- type: entity
+  id: OrganCyberneticCivilianCoprocessor
+  parent: BaseCyberneticOrgan
+  name: civilian cyberware coprocessor
+  description: "It processes cyberware sometimes."
+  components:
+  - type: Organ
+    slotId: Coprocessor # Our new super cool organ slot
+  - type: Cyberware
+  - type: CyberwareCoprocessor
+    safeTolerance: 3
+    dangerTolerance: 4
+    maximumTolerance: 5
+
+# Organs
+- type: entity
+  id: OrganCyberneticAutoBreweryStomach
+  parent: BaseCyberneticOrgan
+  name: auto brewery stomach
+  description: "Gross. This is hard to stomach."
+  components:
+  - type: Organ # Shitmed Change
+    slotId: stomach # Shitmed Change
+  - type: Sprite
+    state: stomach
+  - type: SolutionContainerManager
+    solutions:
+      stomach:
+        maxVol: 50
+  - type: Stomach
+  # The stomach metabolizes stuff like foods and drinks.
+  # TODO: Have it work off of the ent's solution container, and move this
+  # to intestines instead.
+  - type: Metabolizer
+    maxReagents: 3
+    metabolizerTypes: [Human, AutoBrewery]
+    groups:
+    - id: Food
+    - id: Drink
+
+
+# Arms
+- type: entity
+  parent: LeftArmCybernetic
+  id: GorillaArmLeftArm
+  name: gorilla arm left
+  description: A cybernetic left arm with the ability to pry doors open.
+  components:
+  # TODO: Add a component so that OnAdd() only triggers if both arms are installed
+  - type: BodyPart
+    onAdd:
+    - type: GorillaArms # for potential conflicts with other traits that replace unarmed damage
+      modifiers:
+        coefficients:
+          Blunt: 1.8
+          Slash: 1.8
+          Piercing: 1.8
+          Heat: 1
+          Poison: 1
+          Asphyxiation: 1
+    - type: Prying
+      pryPowered: true
+      speedModifier: 3.5 # fast because strong
+      useSound:
+        path: /Audio/Items/crowbar.ogg
+    - type: puller
+      walkSpeedModifier: 1
+      sprintSpeedModifier: 1
+  - type: Cyberware
+  - type: CyberwareSymmetry
+    symmetryID: GorillaArm
+
+- type: entity
+  parent: RightArmCybernetic
+  id: GorillaArmRightArm
+  name: gorilla arm right
+  description: A cybernetic right arm with the ability to pry doors open.
+  components:
+  # TODO: Add a component so that OnAdd() only triggers if both arms are installed
+  - type: Cyberware
+  - type: BodyPart
+    onAdd:
+    - type: GorillaArms # for potential conflicts with other traits that replace unarmed damage
+      modifiers:
+        coefficients:
+          Blunt: 1.8
+          Slash: 1.8
+          Piercing: 1.8
+          Heat: 1
+          Poison: 1
+          Asphyxiation: 1
+    - type: Prying
+      pryPowered: true
+      speedModifier: 3.5 # fast because strong
+      useSound:
+        path: /Audio/Items/crowbar.ogg
+    - type: puller
+      walkSpeedModifier: 1
+      sprintSpeedModifier: 1
+  - type: Cyberware
+  - type: CyberwareSymmetry
+    symmetryID: GorillaArm
