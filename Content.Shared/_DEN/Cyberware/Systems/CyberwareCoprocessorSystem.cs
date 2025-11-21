@@ -1,8 +1,11 @@
 ﻿using Content.Shared._DEN.Cyberware.Components;
 using Content.Shared._Shitmed.Body.Events;
 using Content.Shared._Shitmed.Body.Organ;
+using Content.Shared.Body.Components;
+using Content.Shared.Body.Part;
 using Content.Shared.Body.Systems;
 using Robust.Shared.Serialization.Manager;
+using Robust.Shared.Toolshed.Commands.Math;
 
 
 namespace Content.Shared._DEN.Cyberware.Systems;
@@ -11,6 +14,7 @@ namespace Content.Shared._DEN.Cyberware.Systems;
 public sealed class CyberwareCoprocessorSystem : EntitySystem
 {
     [Dependency] private SharedBodySystem _bodySystem = default!;
+    [Dependency] private CyberwareSystem _cyberwareSystem = default!;
     public override void Initialize()
     {
         base.Initialize();
@@ -24,11 +28,13 @@ public sealed class CyberwareCoprocessorSystem : EntitySystem
         OrganComponentsModifyEvent e
     )
     {
+        if (!_cyberwareSystem.TryRootBodyFromOrgan(e.Body, out var body))
+            return;
+
         if (e.Add)
         {
-            AddComp<CyberwareCapableComponent>(e.Body);
-
-            foreach (var part in _bodySystem.GetBodyPartChildren(e.Body))
+            AddComp(body, new CyberwareCapableComponent(), true);
+            foreach (var part in _bodySystem.GetBodyPartChildren(body))
             {
                 foreach (var organ in _bodySystem.GetPartOrgans(part.Id))
                 {
@@ -48,9 +54,9 @@ public sealed class CyberwareCoprocessorSystem : EntitySystem
         }
         else
         {
-            RemComp<CyberwareCapableComponent>(e.Body);
+            RemComp<CyberwareCapableComponent>(body);
 
-            foreach (var part in _bodySystem.GetBodyPartChildren(e.Body))
+            foreach (var part in _bodySystem.GetBodyPartChildren(body))
             {
                 foreach (var organ in _bodySystem.GetPartOrgans(part.Id))
                 {

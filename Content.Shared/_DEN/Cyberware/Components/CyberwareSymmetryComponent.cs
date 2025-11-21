@@ -11,5 +11,11 @@ public sealed partial class CyberwareSymmetryComponent : Component
     ///     The ID of the sister cyberware required for the entity to function
     /// </summary>
     [DataField, AutoNetworkedField]
-    public string SymmetryID;
+    public string SisterID;
+
+    /// <summary>
+    ///     The ID to be compared to the sisterID on the other cybernetic
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public string SelfID;
 }

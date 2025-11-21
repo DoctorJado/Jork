@@ -8,5 +8,5 @@ namespace Content.Shared._DEN.Cyberware.Components;
 public sealed partial class CyberwareCapableComponent : Component
 {
     [AutoNetworkedField]
-    public int CurrentUsage;
+    public int CurrentUsage = 0;
 }

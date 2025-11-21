@@ -22,7 +22,7 @@
   description: "It processes cyberware sometimes."
   components:
   - type: Organ
-    slotId: Coprocessor # Our new super cool organ slot
+    slotId: coprocessor # Our new super cool organ slot
   - type: Cyberware
   - type: CyberwareCoprocessor
     safeTolerance: 3
@@ -36,24 +36,25 @@
   name: auto brewery stomach
   description: "Gross. This is hard to stomach."
   components:
-  - type: Organ # Shitmed Change
-    slotId: stomach # Shitmed Change
+  - type: Organ
+    slotId: stomach
+  - type: Stomach
   - type: Sprite
     state: stomach
   - type: SolutionContainerManager
     solutions:
       stomach:
         maxVol: 50
-  - type: Stomach
-  # The stomach metabolizes stuff like foods and drinks.
-  # TODO: Have it work off of the ent's solution container, and move this
-  # to intestines instead.
-  - type: Metabolizer
-    maxReagents: 3
-    metabolizerTypes: [Human, AutoBrewery]
-    groups:
-    - id: Food
-    - id: Drink
+  - type: Cyberware
+    complexity: 1
+  - type: SimpleCyberware
+    addSelf: # Adds the components below when the cybernetic is online and powered
+    - type: Metabolizer
+      maxReagents: 3
+      metabolizerTypes: [Human, AutoBrewery]
+      groups:
+      - id: Food
+      - id: Drink
 
 
 # Arms
@@ -65,7 +66,13 @@
   components:
   # TODO: Add a component so that OnAdd() only triggers if both arms are installed
   - type: BodyPart
-    onAdd:
+  - type: Cyberware
+    complexity: 3
+  - type: CyberwareSymmetry
+    selfID: GorillaArmLeft
+    sisterID: GorillaArmRight
+  - type: SimpleCyberware
+    addParent:
     - type: GorillaArms # for potential conflicts with other traits that replace unarmed damage
       modifiers:
         coefficients:
@@ -83,9 +90,6 @@
     - type: puller
       walkSpeedModifier: 1
       sprintSpeedModifier: 1
-  - type: Cyberware
-  - type: CyberwareSymmetry
-    symmetryID: GorillaArm
 
 - type: entity
   parent: RightArmCybernetic
@@ -94,9 +98,13 @@
   description: A cybernetic right arm with the ability to pry doors open.
   components:
   # TODO: Add a component so that OnAdd() only triggers if both arms are installed
-  - type: Cyberware
   - type: BodyPart
-    onAdd:
+  - type: Cyberware
+  - type: CyberwareSymmetry
+    selfID: GorillaArmRight
+    sisterID: GorillaArmLeft
+  - type: SimpleCyberware
+    addParent:
     - type: GorillaArms # for potential conflicts with other traits that replace unarmed damage
       modifiers:
         coefficients:
@@ -114,6 +122,3 @@
     - type: puller
       walkSpeedModifier: 1
       sprintSpeedModifier: 1
-  - type: Cyberware
-  - type: CyberwareSymmetry
-    symmetryID: GorillaArm

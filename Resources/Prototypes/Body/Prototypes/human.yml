@@ -21,6 +21,7 @@
       organs:
         brain: OrganHumanBrain
         eyes: OrganHumanEyes
+        coprocessor: OrganCyberneticCivilianCoprocessor
     torso:
       part: TorsoHuman
       connections:
