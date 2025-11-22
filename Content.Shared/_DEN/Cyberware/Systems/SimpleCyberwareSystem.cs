@@ -54,6 +54,8 @@ public sealed class SimpleCyberwareSystem : EntitySystem
         {
             Logger.Debug("enabling part cyberware: " + cyberwareComp.Owner);
             EnableCyberware(cyberwareComp, component, parentTarget);
+
+            _cyberwareSystem.UpdateComplexityTotal(cyberwareComp, parentTarget, true);
         }
 
         else if (TryComp<OrganComponent>(cyberwareComp.Owner, out var organComp)
@@ -62,6 +64,8 @@ public sealed class SimpleCyberwareSystem : EntitySystem
         {
             Logger.Debug("enabling organ cyberware: " + cyberwareComp.Owner);
             EnableCyberware(cyberwareComp, component, bodyTarget);
+
+            _cyberwareSystem.UpdateComplexityTotal(cyberwareComp, bodyTarget, true);
         }
 
 
@@ -73,14 +77,24 @@ public sealed class SimpleCyberwareSystem : EntitySystem
         if(!TryComp<CyberwareComponent>(uid, out var cyberwareComp))
             return;
 
-        if(TryComp<BodyPartComponent>(cyberwareComp.Owner, out var bodyPartComp)
+        if (TryComp<BodyPartComponent>(cyberwareComp.Owner, out var bodyPartComp)
             && bodyPartComp.Body is not null
             && _cyberwareSystem.TryRootBodyFromOrgan(bodyPartComp.Body.Value, out var parentTarget))
+        {
             DisableCyberware(cyberwareComp, component, parentTarget);
+
+            _cyberwareSystem.UpdateComplexityTotal(cyberwareComp, parentTarget, false);
+        }
+
         else if (TryComp<OrganComponent>(cyberwareComp.Owner, out var organComp)
             && organComp.Body is not null
             && _cyberwareSystem.TryRootBodyFromOrgan(organComp.Body.Value, out var bodyTarget))
+        {
             DisableCyberware(cyberwareComp, component, bodyTarget);
+
+            _cyberwareSystem.UpdateComplexityTotal(cyberwareComp, bodyTarget, false);
+        }
+
 
         DirtyEntity(uid);
     }

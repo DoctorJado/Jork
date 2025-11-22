@@ -2,6 +2,7 @@
 using Content.Shared._Shitmed.Body.Events;
 using Content.Shared._Shitmed.Body.Organ;
 using Content.Shared.Body.Components;
+using Content.Shared.Body.Events;
 using Content.Shared.Body.Part;
 using Content.Shared.Body.Systems;
 using Robust.Shared.Serialization.Manager;
@@ -19,59 +20,58 @@ public sealed class CyberwareCoprocessorSystem : EntitySystem
     {
         base.Initialize();
 
-        SubscribeLocalEvent<CyberwareCoprocessorComponent, OrganComponentsModifyEvent>(OnOrganCoprocessorComponentsModify);
+        SubscribeLocalEvent<CyberwareCoprocessorComponent, OrganAddedToBodyEvent>(OnOrganCoprocessorAddedToBody);
+        SubscribeLocalEvent<CyberwareCoprocessorComponent, OrganRemovedFromBodyEvent>(OnOrganCoprocessorRemovedFromBody);
     }
 
-    public void OnOrganCoprocessorComponentsModify(
-        EntityUid uid,
-        CyberwareCoprocessorComponent component,
-        OrganComponentsModifyEvent e
-    )
+    public void OnOrganCoprocessorAddedToBody(EntityUid uid, CyberwareCoprocessorComponent component, OrganAddedToBodyEvent e)
     {
         if (!_cyberwareSystem.TryRootBodyFromOrgan(e.Body, out var body))
             return;
 
-        if (e.Add)
-        {
-            AddComp(body, new CyberwareCapableComponent(), true);
-            foreach (var part in _bodySystem.GetBodyPartChildren(body))
-            {
-                foreach (var organ in _bodySystem.GetPartOrgans(part.Id))
-                {
-                    if (HasComp<CyberwareComponent>(organ.Id))
-                    {
-                        var evt = new OrganEnabledEvent();
-                        RaiseLocalEvent(organ.Id, ref evt);
-                    }
-                }
+        AddComp(body, new CyberwareCapableComponent(), true);
 
-                if (HasComp<CyberwareComponent>(part.Id))
+        foreach (var part in _bodySystem.GetBodyPartChildren(body))
+        {
+            foreach (var organ in _bodySystem.GetPartOrgans(part.Id))
+            {
+                if (HasComp<CyberwareComponent>(organ.Id))
                 {
-                    var evt = new BodyPartEnabledEvent();
-                    RaiseLocalEvent(part.Id, ref evt);
+                    var evt = new OrganEnabledEvent();
+                    RaiseLocalEvent(organ.Id, ref evt);
                 }
             }
-        }
-        else
-        {
-            RemComp<CyberwareCapableComponent>(body);
 
-            foreach (var part in _bodySystem.GetBodyPartChildren(body))
+            if (HasComp<CyberwareComponent>(part.Id))
             {
-                foreach (var organ in _bodySystem.GetPartOrgans(part.Id))
-                {
-                    if (HasComp<CyberwareComponent>(organ.Id))
-                    {
-                        var evt = new OrganDisabledEvent();
-                        RaiseLocalEvent(organ.Id, ref evt);
-                    }
-                }
+                var evt = new BodyPartEnabledEvent();
+                RaiseLocalEvent(part.Id, ref evt);
+            }
+        }
+    }
 
-                if (HasComp<CyberwareComponent>(part.Id))
+    public void OnOrganCoprocessorRemovedFromBody(EntityUid uid, CyberwareCoprocessorComponent component, OrganRemovedFromBodyEvent e)
+    {
+        if (!_cyberwareSystem.TryRootBodyFromOrgan(e.OldBody, out var body))
+            return;
+
+        RemComp<CyberwareCapableComponent>(body);
+
+        foreach (var part in _bodySystem.GetBodyPartChildren(body))
+        {
+            foreach (var organ in _bodySystem.GetPartOrgans(part.Id))
+            {
+                if (HasComp<CyberwareComponent>(organ.Id))
                 {
-                    var evt = new BodyPartDisabledEvent();
-                    RaiseLocalEvent(part.Id, ref evt);
+                    var evt = new OrganDisabledEvent();
+                    RaiseLocalEvent(organ.Id, ref evt);
                 }
+            }
+
+            if (HasComp<CyberwareComponent>(part.Id))
+            {
+                var evt = new BodyPartDisabledEvent();
+                RaiseLocalEvent(part.Id, ref evt);
             }
         }
     }

@@ -19,7 +19,7 @@
   id: OrganCyberneticCivilianCoprocessor
   parent: BaseCyberneticOrgan
   name: civilian cyberware coprocessor
-  description: "It processes cyberware sometimes."
+  description: It processes cyberware sometimes.
   components:
   - type: Organ
     slotId: coprocessor # Our new super cool organ slot
@@ -34,7 +34,7 @@
   id: OrganCyberneticAutoBreweryStomach
   parent: BaseCyberneticOrgan
   name: auto brewery stomach
-  description: "Gross. This is hard to stomach."
+  description: Gross. This is hard to stomach.
   components:
   - type: Organ
     slotId: stomach
@@ -87,9 +87,6 @@
       speedModifier: 3.5 # fast because strong
       useSound:
         path: /Audio/Items/crowbar.ogg
-    - type: puller
-      walkSpeedModifier: 1
-      sprintSpeedModifier: 1
 
 - type: entity
   parent: RightArmCybernetic
@@ -100,6 +97,7 @@
   # TODO: Add a component so that OnAdd() only triggers if both arms are installed
   - type: BodyPart
   - type: Cyberware
+    complexity: 3
   - type: CyberwareSymmetry
     selfID: GorillaArmRight
     sisterID: GorillaArmLeft
@@ -119,6 +117,3 @@
       speedModifier: 3.5 # fast because strong
       useSound:
         path: /Audio/Items/crowbar.ogg
-    - type: puller
-      walkSpeedModifier: 1
-      sprintSpeedModifier: 1

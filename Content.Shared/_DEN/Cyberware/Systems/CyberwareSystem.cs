@@ -1,6 +1,8 @@
 ﻿using Content.Shared._DEN.Cyberware.Components;
 using Content.Shared._Shitmed.Body.Events;
 using Content.Shared._Shitmed.Body.Organ;
+using Content.Shared.Body.Components;
+using Content.Shared.Body.Events;
 using Content.Shared.Body.Organ;
 using Content.Shared.Body.Part;
 using Content.Shared.Body.Systems;
@@ -18,13 +20,16 @@ public sealed class CyberwareSystem : EntitySystem
     {
         base.Initialize();
 
-        SubscribeLocalEvent<CyberwareComponent, BodyPartComponentsModifyEvent>(OnPartComponentsModify);
-        SubscribeLocalEvent<CyberwareComponent, OrganComponentsModifyEvent>(OnOrganComponentsModify);
+        SubscribeLocalEvent<BodyComponent, BodyPartAttachedEvent>(OnPartAddedToBody);
+        SubscribeLocalEvent<BodyComponent, BodyPartDroppedEvent>(OnPartRemovedFromBody);
+
+        SubscribeLocalEvent<CyberwareComponent, OrganAddedToBodyEvent>(OnOrganAddedToBody);
+        SubscribeLocalEvent<CyberwareComponent, OrganRemovedFromBodyEvent>(OnOrganRemovedFromBody);
     }
 
-    private void UpdateComplexityTotal(CyberwareComponent component, EntityUid evt, bool enabled)
+    public void UpdateComplexityTotal(CyberwareComponent component, EntityUid evt, bool enabled)
     {
-        if (!TryRootBodyFromOrgan(evt, out var body) || !TryComp<CyberwareCapableComponent>(body, out var capable))
+        if (!TryComp<CyberwareCapableComponent>(evt, out var capable))
             return;
 
         if (enabled)
@@ -32,7 +37,7 @@ public sealed class CyberwareSystem : EntitySystem
         else
             capable.CurrentUsage -= component.Complexity;
 
-        DirtyEntity(body);
+        DirtyEntity(evt);
         Logger.Debug("update complexity total: " + capable.CurrentUsage);
     }
 
@@ -60,66 +65,81 @@ public sealed class CyberwareSystem : EntitySystem
         Logger.Debug("symmetry fail");
         return false;
     }
-    public void OnPartComponentsModify(EntityUid uid, CyberwareComponent component, BodyPartComponentsModifyEvent e)
+
+    public void OnOrganAddedToBody(EntityUid uid, CyberwareComponent component, OrganAddedToBodyEvent e)
     {
-        UpdateComplexityTotal(component, e.Body, e.Add);
-
-        if(e.Add)
-            component.Parent = e.Body;
-        else
-            component.Parent = null;
-
-        if (!TryComp<BodyPartComponent>(component.Owner, out var bodyPartComp)
-            || bodyPartComp.Body is null || !TryRootEntityFromOrgan(bodyPartComp.Body.Value, out var body))
-            return;
+        component.Parent = e.Part;
 
         if (TryComp<CyberwareSymmetryComponent>(component.Owner, out var symmetry)
+            && !SymmetryComponentCheck(e.Body, symmetry)
+            || !TryRootBodyFromOrgan(e.Body, out var body)
+            || !TryComp<CyberwareCapableComponent>(body, out _))
+            return;
+
+        var evt = new CyberwareEnabledEvent();
+        RaiseLocalEvent(uid, ref evt);
+    }
+
+    public void OnOrganRemovedFromBody(EntityUid uid, CyberwareComponent component, ref OrganRemovedFromBodyEvent e)
+    {
+        component.Parent = null;
+
+        if (TryComp<CyberwareSymmetryComponent>(component.Owner, out var symmetry)
+            && !SymmetryComponentCheck(e.OldBody, symmetry)
+            || !TryRootBodyFromOrgan(e.OldBody, out var body)
+            || !TryComp<CyberwareCapableComponent>(body, out _))
+            return;
+
+        var evt = new CyberwareDisabledEvent();
+        RaiseLocalEvent(uid, ref evt);
+    }
+
+    public void OnPartAddedToBody(EntityUid uid, BodyComponent component, ref BodyPartAttachedEvent e)
+    {
+        Logger.Debug("massive poopie");
+
+        if (!TryComp<CyberwareComponent>(e.Part, out var cyberwareComp))
+            return;
+
+        cyberwareComp.Parent = e.Part;
+
+        if (!TryComp<BodyPartComponent>(e.Part.Owner, out var bodyPartComp)
+            || bodyPartComp.Body is null
+            || !TryRootEntityFromOrgan(bodyPartComp.Body.Value, out var body)
+            || !TryRootBodyFromOrgan(bodyPartComp.Body.Value, out var bodyEnt)
+            || !TryComp<CyberwareCapableComponent>(bodyEnt, out _))
+            return;
+
+        if (TryComp<CyberwareSymmetryComponent>(e.Part, out var symmetry)
             && !SymmetryComponentCheck(body, symmetry))
             return;
 
-        Logger.Debug("symmetry check part passed");
-
-        if (e.Add)
-        {
-            var evt = new CyberwareEnabledEvent();
-            RaiseLocalEvent(uid, ref evt);
-        }
-        else
-        {
-            var evt = new CyberwareDisabledEvent();
-            RaiseLocalEvent(uid, ref evt);
-        }
+        var evt = new CyberwareEnabledEvent();
+        RaiseLocalEvent(cyberwareComp.Owner, ref evt);
     }
 
-    public void OnOrganComponentsModify(EntityUid uid, CyberwareComponent component, OrganComponentsModifyEvent e)
+    public void OnPartRemovedFromBody(EntityUid uid, BodyComponent component, BodyPartDroppedEvent e)
     {
-        UpdateComplexityTotal(component, e.Body, e.Add);
+        Logger.Debug("massive poopie");
 
-        if(e.Add)
-            component.Parent = e.Body;
-        else
-            component.Parent = null;
-
-        if (!TryComp<OrganComponent>(component.Owner, out var organComp)
-            || organComp.Body is null || !TryRootEntityFromOrgan(organComp.Body.Value, out var root))
+        if (!TryComp<CyberwareComponent>(e.Part, out var cyberwareComp))
             return;
 
-        if (TryComp<CyberwareSymmetryComponent>(component.Owner, out var symmetry)
-            && !SymmetryComponentCheck(root, symmetry))
+        cyberwareComp.Parent = null;
+
+        if (!TryComp<BodyPartComponent>(e.Part.Owner, out var bodyPartComp)
+            || bodyPartComp.Body is null
+            || !TryRootEntityFromOrgan(bodyPartComp.Body.Value, out var body)
+            || !TryRootBodyFromOrgan(bodyPartComp.Body.Value, out var bodyEnt)
+            || !TryComp<CyberwareCapableComponent>(bodyEnt, out _))
             return;
 
-        Logger.Debug("symmetry check organ passed");
+        if (TryComp<CyberwareSymmetryComponent>(e.Part, out var symmetry)
+            && !SymmetryComponentCheck(body, symmetry))
+            return;
 
-        if (e.Add)
-        {
-            var evt = new CyberwareEnabledEvent();
-            RaiseLocalEvent(uid, ref evt);
-        }
-        else
-        {
-            var evt = new CyberwareDisabledEvent();
-            RaiseLocalEvent(uid, ref evt);
-        }
+        var evt = new CyberwareDisabledEvent();
+        RaiseLocalEvent(cyberwareComp.Owner, ref evt);
     }
 
     public bool TryRootBodyFromOrgan(EntityUid organ, out EntityUid body)
