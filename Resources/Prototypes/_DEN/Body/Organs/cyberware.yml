@@ -47,6 +47,7 @@
         maxVol: 50
   - type: Cyberware
     complexity: 1
+  - type: CyberwareCanEmp
   - type: SimpleCyberware
     addSelf: # Adds the components below when the cybernetic is online and powered
     - type: Metabolizer
@@ -64,10 +65,10 @@
   name: gorilla arm left
   description: A cybernetic left arm with the ability to pry doors open.
   components:
-  # TODO: Add a component so that OnAdd() only triggers if both arms are installed
   - type: BodyPart
   - type: Cyberware
     complexity: 3
+  - type: CyberwareCanEmp
   - type: CyberwareSymmetry
     selfID: GorillaArmLeft
     sisterID: GorillaArmRight
@@ -94,10 +95,10 @@
   name: gorilla arm right
   description: A cybernetic right arm with the ability to pry doors open.
   components:
-  # TODO: Add a component so that OnAdd() only triggers if both arms are installed
   - type: BodyPart
   - type: Cyberware
     complexity: 3
+  - type: CyberwareCanEmp
   - type: CyberwareSymmetry
     selfID: GorillaArmRight
     sisterID: GorillaArmLeft

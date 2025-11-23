@@ -1,6 +1,6 @@
 ﻿using Content.Shared.Damage;
 
-namespace Content.Server._DEN.Cybernetics.Components;
+namespace Content.Shared._DEN.Cyberware.Components;
 
 [RegisterComponent]
 public sealed partial class GorillaArmsComponent : Component

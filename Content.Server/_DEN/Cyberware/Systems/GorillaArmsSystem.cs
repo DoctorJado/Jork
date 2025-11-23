@@ -1,11 +1,11 @@
-﻿using Content.Server._DEN.Cybernetics.Components;
-using Content.Shared.Damage.Events;
-using Content.Shared.Weapons.Melee;
+﻿
+using Content.Shared._DEN.Cyberware.Components;
 using Content.Shared.Weapons.Melee.Events;
 using Robust.Shared.Containers;
 
-namespace Content.Server.FloofStation.Traits.Cybernetics.Systems;
-public sealed partial class BoxingSystem : EntitySystem
+
+namespace Content.Server._DEN.Cyberware.Systems;
+public sealed class GorillaArmsSystem : EntitySystem
 {
     [Dependency] private readonly SharedContainerSystem _containerSystem = default!;
 

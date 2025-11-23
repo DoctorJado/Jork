@@ -22,57 +22,94 @@ public sealed class CyberwareCoprocessorSystem : EntitySystem
 
         SubscribeLocalEvent<CyberwareCoprocessorComponent, OrganAddedToBodyEvent>(OnOrganCoprocessorAddedToBody);
         SubscribeLocalEvent<CyberwareCoprocessorComponent, OrganRemovedFromBodyEvent>(OnOrganCoprocessorRemovedFromBody);
+
+        SubscribeLocalEvent<CyberwareCapableComponent, CyberwareComplexityTotalChange>(OnCyberwareComplexityTotalChange);
     }
 
-    public void OnOrganCoprocessorAddedToBody(EntityUid uid, CyberwareCoprocessorComponent component, OrganAddedToBodyEvent e)
+    private void OnOrganCoprocessorAddedToBody(EntityUid uid, CyberwareCoprocessorComponent component, OrganAddedToBodyEvent e)
     {
-        if (!_cyberwareSystem.TryRootBodyFromOrgan(e.Body, out var body))
+        if (!_cyberwareSystem.TryRootBodyFromOrgan(e.Body, out var body) || !_cyberwareSystem.TryRootEntityFromOrgan(e.Body, out var root))
             return;
 
-        AddComp(body, new CyberwareCapableComponent(), true);
+        Logger.Debug("coprocessor added, activating sigma mode");
 
-        foreach (var part in _bodySystem.GetBodyPartChildren(body))
+        AddComp(body, new CyberwareCapableComponent{ CoprocessorUid = component.Owner }, true);
+
+        foreach (var part in _bodySystem.GetBodyPartChildren(root))
         {
             foreach (var organ in _bodySystem.GetPartOrgans(part.Id))
             {
-                if (HasComp<CyberwareComponent>(organ.Id))
+                if (TryComp<CyberwareComponent>(organ.Id, out var organComp))
                 {
-                    var evt = new OrganEnabledEvent();
-                    RaiseLocalEvent(organ.Id, ref evt);
+                    Logger.Debug("coprocessor added, enabling organ");
+                    var evt = new CyberwareEnabledEvent();
+                    RaiseLocalEvent(organComp.Owner, ref evt);
                 }
             }
 
-            if (HasComp<CyberwareComponent>(part.Id))
+            if (TryComp<CyberwareComponent>(part.Id, out var partComp))
             {
-                var evt = new BodyPartEnabledEvent();
-                RaiseLocalEvent(part.Id, ref evt);
+                var evt = new CyberwareEnabledEvent();
+                RaiseLocalEvent(partComp.Owner, ref evt);
             }
         }
+        DirtyEntity(body);
     }
 
-    public void OnOrganCoprocessorRemovedFromBody(EntityUid uid, CyberwareCoprocessorComponent component, OrganRemovedFromBodyEvent e)
+    private void OnOrganCoprocessorRemovedFromBody(EntityUid uid, CyberwareCoprocessorComponent component, OrganRemovedFromBodyEvent e)
     {
-        if (!_cyberwareSystem.TryRootBodyFromOrgan(e.OldBody, out var body))
+        if (!_cyberwareSystem.TryRootBodyFromOrgan(e.OldBody, out var body) || !_cyberwareSystem.TryRootEntityFromOrgan(e.OldBody, out var root))
             return;
+
+        Logger.Debug("coprocessor removed, disabling sigma mode");
 
         RemComp<CyberwareCapableComponent>(body);
 
-        foreach (var part in _bodySystem.GetBodyPartChildren(body))
+        foreach (var part in _bodySystem.GetBodyPartChildren(root))
         {
-            foreach (var organ in _bodySystem.GetPartOrgans(part.Id))
+            foreach (var organ in _bodySystem.GetPartOrgans(part.Id, part.Component))
             {
-                if (HasComp<CyberwareComponent>(organ.Id))
+                if (TryComp<CyberwareComponent>(organ.Id, out var organComp))
                 {
-                    var evt = new OrganDisabledEvent();
-                    RaiseLocalEvent(organ.Id, ref evt);
+                    Logger.Debug("coprocessor removed, disabling organ");
+                    var evt = new CyberwareDisabledEvent();
+                    RaiseLocalEvent(organComp.Owner, ref evt);
                 }
             }
 
-            if (HasComp<CyberwareComponent>(part.Id))
+            if (TryComp<CyberwareComponent>(part.Id, out var partComp))
             {
-                var evt = new BodyPartDisabledEvent();
-                RaiseLocalEvent(part.Id, ref evt);
+                var evt = new CyberwareDisabledEvent();
+                RaiseLocalEvent(partComp.Owner, ref evt);
             }
+        }
+        DirtyEntity(body);
+    }
+
+    private void OnCyberwareComplexityTotalChange(
+        EntityUid uid,
+        CyberwareCapableComponent component,
+        CyberwareComplexityTotalChange e
+    )
+    {
+        Logger.Debug("someone farted and increased gyatt levels to: " + component.CurrentUsage);
+
+        if (!TryComp<CyberwareCoprocessorComponent>(component.CoprocessorUid, out var coprocessorComp))
+            return;
+
+        if (component.CurrentUsage > coprocessorComp.SafeTolerance)
+        {
+            // do medium shit
+        }
+
+        if (component.CurrentUsage > coprocessorComp.DangerTolerance)
+        {
+            // do pretty fucking bad shit
+        }
+
+        if (component.CurrentUsage > coprocessorComp.MaximumTolerance)
+        {
+            // fucking kill them probably
         }
     }
 }
