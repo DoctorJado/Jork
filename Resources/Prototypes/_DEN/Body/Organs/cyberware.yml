@@ -21,6 +21,11 @@
   name: civilian cyberware coprocessor
   description: It processes cyberware sometimes.
   components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _DEN/Mobs/Organs/cyberware.rsi
+    state: deck1
   - type: Organ
     slotId: coprocessor # Our new super cool organ slot
   - type: Cyberware
@@ -28,6 +33,82 @@
     safeTolerance: 3
     dangerTolerance: 4
     maximumTolerance: 5
+
+- type: entity
+  id: OrganCyberneticModestCoprocessor
+  parent: BaseCyberneticOrgan
+  name: modest cyberware coprocessor
+  description: It processes cyberware sometimes.
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _DEN/Mobs/Organs/cyberware.rsi
+    state: deck2
+  - type: Organ
+    slotId: coprocessor
+  - type: Cyberware
+  - type: CyberwareCoprocessor
+    safeTolerance: 6
+    dangerTolerance: 7
+    maximumTolerance: 8
+
+- type: entity
+  id: OrganCyberneticAdvancedCoprocessor
+  parent: BaseCyberneticOrgan
+  name: advanced cyberware coprocessor
+  description: It processes cyberware sometimes.
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _DEN/Mobs/Organs/cyberware.rsi
+    state: deck3
+  - type: Organ
+    slotId: coprocessor
+  - type: Cyberware
+  - type: CyberwareCoprocessor
+    safeTolerance: 9
+    dangerTolerance: 10
+    maximumTolerance: 11
+
+- type: entity
+  id: OrganCyberneticDebugCoprocessor
+  parent: BaseCyberneticOrgan
+  name: debug cyberware coprocessor
+  description: It processes cyberware sometimes.
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _DEN/Mobs/Organs/cyberware.rsi
+    state: deck4
+  - type: Organ
+    slotId: coprocessor
+  - type: Cyberware
+  - type: CyberwareCoprocessor
+    safeTolerance: 256
+    dangerTolerance: 256
+    maximumTolerance: 256
+
+- type: entity
+  id: OrganCyberneticSyndicateCoprocessor
+  parent: BaseCyberneticOrgan
+  name: syndicate cyberware coprocessor
+  description: It processes cyberware sometimes.
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _DEN/Mobs/Organs/cyberware.rsi
+    state: deck5
+  - type: Organ
+    slotId: coprocessor
+  - type: Cyberware
+  - type: CyberwareCoprocessor
+    safeTolerance: 16
+    dangerTolerance: 17
+    maximumTolerance: 18
 
 # Organs
 - type: entity
@@ -40,7 +121,8 @@
     slotId: stomach
   - type: Stomach
   - type: Sprite
-    state: stomach
+    sprite: _DEN/Mobs/Organs/cyberware.rsi
+    state: autobrewery
   - type: SolutionContainerManager
     solutions:
       stomach:
