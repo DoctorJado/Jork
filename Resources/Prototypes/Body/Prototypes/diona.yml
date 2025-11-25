@@ -19,6 +19,7 @@
       - torso
       organs:
         brain: OrganDionaBrainNymph
+        coprocessor: OrganCyberneticBaseDeckDiona
     torso:
       part: TorsoDiona
       connections:
