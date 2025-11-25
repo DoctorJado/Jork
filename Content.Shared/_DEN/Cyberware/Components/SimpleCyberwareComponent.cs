@@ -33,5 +33,4 @@ public sealed partial class SimpleCyberwareComponent : Component
     /// </summary>
     [DataField, AlwaysPushInheritance]
     public ComponentRegistry? RemoveParent;
-
 }

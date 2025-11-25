@@ -29,12 +29,12 @@ public abstract class CyberwareAddActionSystem : EntitySystem
 
     private void OnCyberwareEnable(EntityUid uid, CyberwareAddActionComponent component, CyberwareEnabledEvent ev)
     {
-        if (_net.IsClient || component.ImplantedEntity is null)
+        if (_net.IsClient || component.TargetEntity is null)
             return;
 
         if (!string.IsNullOrWhiteSpace(component.CyberwareAction))
         {
-            _actionsSystem.AddAction(component.ImplantedEntity.Value, ref component.Action, component.CyberwareAction, uid);
+            _actionsSystem.AddAction(component.TargetEntity.Value, ref component.Action, component.CyberwareAction, uid);
         }
     }
 
@@ -45,8 +45,8 @@ public abstract class CyberwareAddActionSystem : EntitySystem
 
     private void OnAddedOrgan(EntityUid uid, CyberwareAddActionComponent component, OrganAddedToBodyEvent ev)
     {
-        _cyberwareSystem.TryRootBodyFromOrgan(ev.Body, out var body);
-        component.ImplantedEntity = body;
+        if(_cyberwareSystem.TryRootBodyFromOrgan(ev.Body, out var body))
+            component.TargetEntity = body;
     }
 
     private void OnAddedPart(EntityUid uid, CyberwareAddActionComponent component, BodyPartAttachedEvent ev)
@@ -54,7 +54,7 @@ public abstract class CyberwareAddActionSystem : EntitySystem
         if (TryComp<BodyPartComponent>(ev.Part.Owner, out var bodyPartComp)
             && bodyPartComp.Body is not null
             && _cyberwareSystem.TryRootBodyFromOrgan(bodyPartComp.Body.Value, out var body))
-            component.ImplantedEntity = body;
+            component.TargetEntity = body;
     }
 
 }

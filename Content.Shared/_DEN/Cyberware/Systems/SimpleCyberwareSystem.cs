@@ -43,7 +43,7 @@ public sealed class SimpleCyberwareSystem : EntitySystem
             }
         }
     }
-    public void OnCyberwareEnable(EntityUid uid, SimpleCyberwareComponent component, CyberwareEnabledEvent ev)
+    private void OnCyberwareEnable(EntityUid uid, SimpleCyberwareComponent component, CyberwareEnabledEvent ev)
     {
         if(!TryComp<CyberwareComponent>(uid, out var cyberwareComp))
             return;
@@ -72,7 +72,7 @@ public sealed class SimpleCyberwareSystem : EntitySystem
         DirtyEntity(uid);
     }
 
-    public void OnCyberwareDisable(EntityUid uid, SimpleCyberwareComponent component, CyberwareDisabledEvent ev)
+    private void OnCyberwareDisable(EntityUid uid, SimpleCyberwareComponent component, CyberwareDisabledEvent ev)
     {
         if(!TryComp<CyberwareComponent>(uid, out var cyberwareComp))
             return;
@@ -135,7 +135,7 @@ public sealed class SimpleCyberwareSystem : EntitySystem
         DirtyEntity(cyberwareComp.Owner);
     }
 
-    private void AddComponents(EntityUid target,
+    public void AddComponents(EntityUid target,
         ComponentRegistry reg)
     {
         foreach (var (key, comp) in reg)
@@ -174,7 +174,7 @@ public sealed class SimpleCyberwareSystem : EntitySystem
         return changed;
     }
 
-    private void RemoveComponents(EntityUid target,
+    public void RemoveComponents(EntityUid target,
         ComponentRegistry reg)
     {
         foreach (var (key, comp) in reg)
@@ -184,7 +184,7 @@ public sealed class SimpleCyberwareSystem : EntitySystem
         }
     }
 
-    private bool UpdateAddedComponents(ComponentRegistry reg, EntityUid root, EntityUid self, bool add, out ComponentRegistry validComponentReg, bool overwrite = false)
+    public bool UpdateAddedComponents(ComponentRegistry reg, EntityUid root, EntityUid self, bool add, out ComponentRegistry validComponentReg, bool overwrite = false)
     {
         validComponentReg = new ComponentRegistry();
 

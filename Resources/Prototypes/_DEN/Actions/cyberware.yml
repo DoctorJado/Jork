@@ -11,4 +11,4 @@
     icon:
       sprite: Actions/Implants/implants.rsi
       state: freedom
-    event: !type:ActivateActionCyberwareEvent
+    event: !type:ActivateActionToggleGenericCyberwareEvent #this event is what toggles the addSelf/addParent datafields

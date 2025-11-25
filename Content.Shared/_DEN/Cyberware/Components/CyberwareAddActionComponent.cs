@@ -9,7 +9,7 @@ namespace Content.Shared._DEN.Cyberware.Components;
 public sealed partial class CyberwareAddActionComponent : Component
 {
     /// <summary>
-    /// Used where you want the implant to grant the owner an instant action.
+    /// Used where you want the cyberware to grant the owner an instant action.
     /// </summary>
     [ViewVariables(VVAccess.ReadWrite)]
     [DataField]
@@ -19,16 +19,43 @@ public sealed partial class CyberwareAddActionComponent : Component
     public EntityUid? Action;
 
     /// <summary>
-    /// The entity this implant is inside
+    /// The entity this cyberware is inside
     /// </summary>
     [ViewVariables, AutoNetworkedField]
-    public EntityUid? ImplantedEntity;
+    public EntityUid? TargetEntity;
+
+    /// <summary>
+    /// Is the cyberware currently applying the Add* fields?
+    /// </summary>
+    [ViewVariables, AutoNetworkedField]
+    public bool EnabledState = false;
+
+    /// <summary>
+    ///     While the cybernetic is active, add these components to itself
+    /// </summary>
+    [DataField, AlwaysPushInheritance]
+    public ComponentRegistry? AddSelf;
+
+    /// <summary>
+    ///     While the cybernetic is active, add these components to its parent (usually the body)
+    /// </summary>
+    [DataField, AlwaysPushInheritance]
+    public ComponentRegistry? AddParent;
+
+    /// <summary>
+    ///     While the cybernetic is active, remove these components from itself
+    /// </summary>
+    [DataField, AlwaysPushInheritance]
+    public ComponentRegistry? RemoveSelf;
+
+    /// <summary>
+    ///     While the cybernetic is active, remove these components from its parent (usually the body)
+    /// </summary>
+    [DataField, AlwaysPushInheritance]
+    public ComponentRegistry? RemoveParent;
 }
 
 /// <summary>
-/// Used for triggering trigger events on the cybernetic via action
+/// Event for toggling add/remove of the generic fields
 /// </summary>
-public sealed partial class ActivateActionCyberwareEvent : InstantActionEvent
-{
-
-}
+public sealed partial class ActivateActionToggleGenericCyberwareEvent : InstantActionEvent { }
