@@ -101,14 +101,14 @@ public sealed class SimpleCyberwareSystem : EntitySystem
 
     private void EnableCyberware(CyberwareComponent cyberwareComp, SimpleCyberwareComponent comp, EntityUid target)
     {
-        if(comp.AddParent is not null)
-            AddComponents(target, comp.AddParent);
+        if(comp.AddParent is not null && UpdateAddedComponents(comp.AddParent, target, cyberwareComp.Owner, true, out var addParentReg))
+            AddComponents(target, addParentReg);
 
         if(comp.AddSelf is not null)
             AddComponents(cyberwareComp.Owner, comp.AddSelf);
 
-        if(comp.RemoveParent is not null)
-            RemoveComponents(target, comp.RemoveParent);
+        if(comp.RemoveParent is not null && UpdateAddedComponents(comp.RemoveParent, target, cyberwareComp.Owner, false, out var removeParentReg))
+            RemoveComponents(target, removeParentReg);
 
         if(comp.RemoveSelf is not null)
             RemoveComponents(cyberwareComp.Owner, comp.RemoveSelf);
@@ -119,14 +119,14 @@ public sealed class SimpleCyberwareSystem : EntitySystem
 
     private void DisableCyberware(CyberwareComponent cyberwareComp, SimpleCyberwareComponent comp, EntityUid target)
     {
-        if(comp.AddParent is not null)
-            RemoveComponents(target, comp.AddParent);
+        if(comp.AddParent is not null && UpdateAddedComponents(comp.AddParent, target, cyberwareComp.Owner, false, out var addParentReg))
+            RemoveComponents(target, addParentReg);
 
         if(comp.AddSelf is not null)
             RemoveComponents(cyberwareComp.Owner, comp.AddSelf);
 
-        if(comp.RemoveParent is not null)
-            AddComponents(target, comp.RemoveParent);
+        if(comp.RemoveParent is not null && UpdateAddedComponents(comp.RemoveParent, target, cyberwareComp.Owner, true, out var removeParentReg))
+            AddComponents(target, removeParentReg);
 
         if(comp.RemoveSelf is not null)
             AddComponents(cyberwareComp.Owner, comp.RemoveSelf);
@@ -182,5 +182,47 @@ public sealed class SimpleCyberwareSystem : EntitySystem
             EntityManager.RemoveComponent(target, comp.Component.GetType());
             Logger.Debug("removing component " + comp.Component.GetType());
         }
+    }
+
+    private bool UpdateAddedComponents(ComponentRegistry reg, EntityUid root, EntityUid self, bool add, out ComponentRegistry validComponentReg, bool overwrite = false)
+    {
+        validComponentReg = new ComponentRegistry();
+
+        if (!TryComp<CyberwareCapableComponent>(root, out var capable))
+            return false;
+
+        if (add)
+        {
+            foreach (var (key, comp) in reg)
+            {
+                if (!capable.AddedComponents.TryGetValue(comp.Component.GetType().ToString(), out var set))
+                {
+                    set = new List<EntityUid>();
+                    capable.AddedComponents[comp.Component.GetType().ToString()] = set;
+                    validComponentReg.Add(key, comp);
+                }
+
+                set.Add(self);
+            }
+        }
+        else
+        {
+            foreach (var (key, comp) in reg)
+            {
+                if (!capable.AddedComponents.TryGetValue(comp.Component.GetType().ToString(), out var set))
+                    continue;
+
+                set.Remove(self);
+
+                if (!set.Any())
+                {
+                    capable.AddedComponents.Remove(comp.Component.GetType().ToString());
+                    validComponentReg.Add(key, comp);
+                }
+            }
+        }
+
+        DirtyEntity(root);
+        return true;
     }
 }

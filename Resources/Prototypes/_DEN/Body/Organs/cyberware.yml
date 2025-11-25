@@ -130,6 +130,8 @@
   - type: Cyberware
     complexity: 1
   - type: CyberwareCanEmp
+  - type: CyberwareAddAction
+    cyberwareAction: ActionActivateCyberwareToggle
   - type: SimpleCyberware
     addSelf: # Adds the components below when the cybernetic is online and powered
     - type: Metabolizer
@@ -138,7 +140,12 @@
       groups:
       - id: Food
       - id: Drink
-
+    addParent:
+    - type: Prying
+      pryPowered: true
+      speedModifier: 3.5 # fast because strong
+      useSound:
+        path: /Audio/Items/crowbar.ogg
 
 # Arms
 - type: entity
