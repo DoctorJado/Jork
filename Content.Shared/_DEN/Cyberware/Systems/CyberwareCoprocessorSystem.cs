@@ -92,7 +92,7 @@ public sealed class CyberwareCoprocessorSystem : EntitySystem
         CyberwareComplexityTotalChange e
     )
     {
-        Logger.Debug("someone farted and increased gyatt levels to: " + component.CurrentUsage);
+        Logger.Debug("someone farted and changed gyatt levels to: " + component.CurrentUsage);
 
         if (!TryComp<CyberwareCoprocessorComponent>(component.CoprocessorUid, out var coprocessorComp))
             return;
