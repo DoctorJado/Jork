@@ -21,6 +21,7 @@
       - torso
       organs:
         eyes: OrganIPCEyes
+        coprocessor: OrganCyberneticCivilianCoprocessor
     torso:
       part: TorsoIPC
       connections:

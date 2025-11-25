@@ -18,6 +18,7 @@
       organs:
         brain: OrganHumanBrain
         eyes: OrganArachnidEyes
+        coprocessor: OrganCyberneticBaseDeckArachne
     torso:
       part: TorsoArachnid
       organs:

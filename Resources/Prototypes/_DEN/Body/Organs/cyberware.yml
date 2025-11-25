@@ -16,6 +16,51 @@
 
 # CyberwareCoprocessors
 - type: entity
+  id: OrganCyberneticBaseDeck
+  parent: BaseHumanOrgan
+  name: chunk of flesh
+  description: A mundane part of the skull. Useless.
+  components:
+  - type: Item
+    size: Small
+  - type: Sprite
+    sprite: Mobs/Species/Human/organs.rsi
+    state: tongue
+  - type: Organ
+    slotId: coprocessor # Our new super cool organ slot
+  - type: CyberwareCoprocessor
+
+- type: entity
+  id: OrganCyberneticBaseDeckArachne
+  parent: BaseArachnidOrgan
+  name: chunk of flesh
+  description: A mundane part of the skull. Useless.
+  components:
+  - type: Item
+    size: Small
+  - type: Sprite
+    sprite: _DEN/Mobs/Organs/cyberware.rsi
+    state: arachnechunk
+  - type: Organ
+    slotId: coprocessor # Our new super cool organ slot
+  - type: CyberwareCoprocessor
+
+- type: entity
+  id: OrganCyberneticBaseDeckDiona
+  parent: BaseDionaOrgan
+  name: chunk of leaves
+  description: A mundane part of a diona's "skull." Useless.
+  components:
+  - type: Item
+    size: Small
+  - type: Sprite
+    sprite: _DEN/Objects/Consumable/Food/burger_sequence.rsi
+    state: leaf
+  - type: Organ
+    slotId: coprocessor
+  - type: CyberwareCoprocessor
+
+- type: entity
   id: OrganCyberneticCivilianCoprocessor
   parent: BaseCyberneticOrgan
   name: civilian cyberware coprocessor
