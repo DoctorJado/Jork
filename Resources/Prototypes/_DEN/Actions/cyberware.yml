@@ -1,0 +1,14 @@
+﻿- type: entity
+  id: ActionActivateCyberwareToggle
+  name: Activate Cyberware
+  description: Activate your cyberware to do cool shit
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: InstantAction
+    checkCanInteract: false
+    itemIconStyle: BigAction
+    priority: -20
+    icon:
+      sprite: Actions/Implants/implants.rsi
+      state: freedom
+    event: !type:ActivateActionToggleGenericCyberwareEvent #this event is what toggles the addSelf/addParent datafields

@@ -28,6 +28,9 @@ public sealed class CyberwareCoprocessorSystem : EntitySystem
 
     private void OnOrganCoprocessorAddedToBody(EntityUid uid, CyberwareCoprocessorComponent component, OrganAddedToBodyEvent e)
     {
+        if(component.SafeTolerance <= 0 && component.SafeTolerance <= 0 && component.SafeTolerance <= 0)
+            return;
+
         if (!_cyberwareSystem.TryRootBodyFromOrgan(e.Body, out var body) || !_cyberwareSystem.TryRootEntityFromOrgan(e.Body, out var root))
             return;
 
@@ -49,6 +52,7 @@ public sealed class CyberwareCoprocessorSystem : EntitySystem
 
             if (TryComp<CyberwareComponent>(part.Id, out var partComp))
             {
+                Logger.Debug("coprocessor added, enabling part");
                 var evt = new CyberwareEnabledEvent();
                 RaiseLocalEvent(partComp.Owner, ref evt);
             }
@@ -62,8 +66,6 @@ public sealed class CyberwareCoprocessorSystem : EntitySystem
             return;
 
         Logger.Debug("coprocessor removed, disabling sigma mode");
-
-        RemComp<CyberwareCapableComponent>(body);
 
         foreach (var part in _bodySystem.GetBodyPartChildren(root))
         {
@@ -79,10 +81,14 @@ public sealed class CyberwareCoprocessorSystem : EntitySystem
 
             if (TryComp<CyberwareComponent>(part.Id, out var partComp))
             {
+                Logger.Debug("coprocessor removed, disabling part");
                 var evt = new CyberwareDisabledEvent();
                 RaiseLocalEvent(partComp.Owner, ref evt);
             }
         }
+
+        RemComp<CyberwareCapableComponent>(body);
+
         DirtyEntity(body);
     }
 
