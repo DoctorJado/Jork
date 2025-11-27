@@ -25,6 +25,18 @@ public sealed partial class CyberwareAddActionComponent : Component
     public EntityUid? TargetEntity;
 
     /// <summary>
+    /// The popup text that appears when the cyberware is toggled on
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public string? CyberwareEnabledPopupText;
+
+    /// <summary>
+    /// The popup text that appears when the cyberware is toggled off
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public string? CyberwareDisabledPopupText;
+
+    /// <summary>
     /// Is the cyberware currently applying the Add* fields?
     /// </summary>
     [ViewVariables, AutoNetworkedField]

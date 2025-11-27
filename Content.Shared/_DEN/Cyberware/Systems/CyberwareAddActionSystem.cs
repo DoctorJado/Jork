@@ -2,8 +2,10 @@
 using Content.Shared._DEN.Cyberware.Components;
 using Content.Shared._Shitmed.Body.Events;
 using Content.Shared.Actions;
+using Content.Shared.Body.Components;
 using Content.Shared.Body.Events;
 using Content.Shared.Body.Part;
+using Content.Shared.Popups;
 using Robust.Shared.Network;
 
 
@@ -22,15 +24,15 @@ public abstract class CyberwareAddActionSystem : EntitySystem
 
         SubscribeLocalEvent<CyberwareAddActionComponent, CyberwareEnabledEvent>(OnCyberwareEnable);
         SubscribeLocalEvent<CyberwareAddActionComponent, CyberwareDisabledEvent>(OnCyberwareDisable);
-
-        SubscribeLocalEvent<CyberwareAddActionComponent, OrganAddedToBodyEvent>(OnAddedOrgan);
-        SubscribeLocalEvent<CyberwareAddActionComponent, BodyPartAttachedEvent>(OnAddedPart);
+        SubscribeLocalEvent<CyberwareAddActionComponent, CyberwareInstalledEvent>(OnCyberwareInstall);
     }
 
     private void OnCyberwareEnable(EntityUid uid, CyberwareAddActionComponent component, CyberwareEnabledEvent ev)
     {
-        if (_net.IsClient || component.TargetEntity is null)
+        if (_net.IsClient || component.TargetEntity is null || !TryComp<CyberwareComponent>(component.Owner, out var cyberwareComp))
             return;
+
+        _cyberwareSystem.UpdateComplexityTotal(cyberwareComp, component.TargetEntity.Value, true);
 
         if (!string.IsNullOrWhiteSpace(component.CyberwareAction))
         {
@@ -40,21 +42,21 @@ public abstract class CyberwareAddActionSystem : EntitySystem
 
     private void OnCyberwareDisable(EntityUid uid, CyberwareAddActionComponent component, CyberwareDisabledEvent ev)
     {
+        if (_net.IsClient || component.TargetEntity is null || !TryComp<CyberwareComponent>(component.Owner, out var cyberwareComp))
+            return;
+
+        _cyberwareSystem.UpdateComplexityTotal(cyberwareComp, component.TargetEntity.Value, false);
+
         _actionsSystem.RemoveAction(component.Action);
     }
 
-    private void OnAddedOrgan(EntityUid uid, CyberwareAddActionComponent component, OrganAddedToBodyEvent ev)
+    private void OnCyberwareInstall(EntityUid uid, CyberwareAddActionComponent component, CyberwareInstalledEvent ev)
     {
-        if(_cyberwareSystem.TryRootBodyFromOrgan(ev.Body, out var body))
-            component.TargetEntity = body;
-    }
-
-    private void OnAddedPart(EntityUid uid, CyberwareAddActionComponent component, BodyPartAttachedEvent ev)
-    {
-        if (TryComp<BodyPartComponent>(ev.Part.Owner, out var bodyPartComp)
+        if (TryComp<BodyPartComponent>(uid, out var bodyPartComp)
             && bodyPartComp.Body is not null
             && _cyberwareSystem.TryRootBodyFromOrgan(bodyPartComp.Body.Value, out var body))
             component.TargetEntity = body;
+        else if(_cyberwareSystem.TryRootBodyFromOrgan(ev.Cyberware.Owner, out var organ))
+            component.TargetEntity = organ;
     }
-
 }

@@ -48,6 +48,7 @@ public sealed class CyberwareSystem : EntitySystem
         // TODO: implement symmetry properly like OnPartAddedToBody
 
         component.Parent = e.Part;
+        TriggerCyberwareInstallEvent(uid);
 
         if (TryComp<CyberwareSymmetryComponent>(component.Owner, out var symmetry)
             && !SymmetryComponentCheck(e.Body, symmetry, out var sisterOrgan)
@@ -81,6 +82,7 @@ public sealed class CyberwareSystem : EntitySystem
             return;
 
         cyberwareComp.Parent = e.Part;
+        TriggerCyberwareInstallEvent(cyberwareComp.Owner);
 
         if (!TryComp<BodyPartComponent>(e.Part.Owner, out var bodyPartComp)
             || bodyPartComp.Body is null
@@ -185,6 +187,12 @@ public sealed class CyberwareSystem : EntitySystem
         Logger.Debug("symmetry fail");
         return false;
     }
+
+    private void TriggerCyberwareInstallEvent(EntityUid uid)
+    {
+        var evt = new CyberwareInstalledEvent();
+        RaiseLocalEvent(uid, ref evt);
+    }
 }
 
 [ByRefEvent]
@@ -195,3 +203,6 @@ public readonly record struct CyberwareDisabledEvent(Entity<CyberwareComponent> 
 
 [ByRefEvent]
 public readonly record struct CyberwareComplexityTotalChange(Entity<CyberwareCapableComponent> Cyberware);
+
+[ByRefEvent]
+public readonly record struct CyberwareInstalledEvent(Entity<CyberwareComponent> Cyberware);

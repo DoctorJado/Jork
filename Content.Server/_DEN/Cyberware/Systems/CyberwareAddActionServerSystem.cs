@@ -1,4 +1,5 @@
 ﻿using Content.Server.Body.Components;
+using Content.Server.Popups;
 using Content.Shared._DEN.Cyberware.Components;
 using Content.Shared._DEN.Cyberware.Systems;
 using Content.Shared.Body.Organ;
@@ -13,6 +14,7 @@ public sealed class CyberwareAddActionServerSystem : CyberwareAddActionSystem
 {
     [Dependency] private CyberwareSystem _cyberwareSystem = default!;
     [Dependency] private SimpleCyberwareSystem _simpleCyberwareSystem = default!;
+    [Dependency] private readonly PopupSystem _popup = default!;
     public override void Initialize()
     {
         base.Initialize();
@@ -26,20 +28,22 @@ public sealed class CyberwareAddActionServerSystem : CyberwareAddActionSystem
         ActivateActionToggleGenericCyberwareEvent ev
     )
     {
-        // AddComp(ev.Performer, new CyberwareComponent(), true);
-        // DirtyEntity(ev.Performer);
+        if(comp.TargetEntity is null)
+            return;
 
         if (comp.EnabledState)
         {
-            Logger.Debug("disabling components");
             ChangeAddState(uid, comp, false);
             comp.EnabledState = false;
+            if(comp.CyberwareDisabledPopupText is not null)
+                _popup.PopupEntity(Loc.GetString(comp.CyberwareDisabledPopupText), comp.TargetEntity.Value, comp.TargetEntity.Value);
         }
         else
         {
-            Logger.Debug("enabling components");
             ChangeAddState(uid, comp, true);
             comp.EnabledState = true;
+            if(comp.CyberwareEnabledPopupText is not null)
+                _popup.PopupEntity(Loc.GetString(comp.CyberwareEnabledPopupText), comp.TargetEntity.Value, comp.TargetEntity.Value);
         }
     }
     // yes I know this is literally copy and pasted but it's just nicer to have it here.
