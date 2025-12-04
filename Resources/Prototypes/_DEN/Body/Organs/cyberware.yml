@@ -297,3 +297,27 @@
     - type: FootstepVolumeModifier # TheDen - Add Light Step - Ninjas should be trained to be silent, no?
       sprintVolumeModifier: -15
       walkVolumeModifier: -15
+
+- type: entity
+  id: DisposableAutodocBase
+  parent: BaseItem
+  name: disposable autodoc
+  components:
+  - type: Hands
+  - type: HandsFill
+    hands:
+      multitool: OmnimedToolAutodoc
+      surgery_specific: OrganCyberneticSyndicateCoprocessor
+  - type: DisposableAutodoc
+    surgerySteps:
+    - surgery: SurgeryOpenIncision
+      part: 2
+    - surgery: SurgeryRemoveCoprocessor
+      part: 2
+    - surgery: SurgeryInsertCoprocessor
+      part: 2
+    - surgery: SurgeryCloseIncision
+      part: 2
+  - type: Sprite
+    sprite: _DEN/Mobs/Organs/cyberware.rsi
+    state: deck5

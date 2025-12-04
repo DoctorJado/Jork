@@ -46,7 +46,8 @@ public sealed class CyberwareAddActionServerSystem : CyberwareAddActionSystem
                 _popup.PopupEntity(Loc.GetString(comp.CyberwareEnabledPopupText), comp.TargetEntity.Value, comp.TargetEntity.Value);
         }
     }
-    // yes I know this is literally copy and pasted but it's just nicer to have it here.
+
+    // yes I know this is literally copy and pasted, but it's just nicer to have it here.
     private void ChangeAddState(EntityUid uid, CyberwareAddActionComponent comp, bool enable)
     {
         if(!TryComp<CyberwareComponent>(uid, out var cyberwareComp))
@@ -58,7 +59,6 @@ public sealed class CyberwareAddActionServerSystem : CyberwareAddActionSystem
         {
             Logger.Debug("enabling part cyberware: " + cyberwareComp.Owner);
             UpdateComponents(cyberwareComp, comp, parentTarget, enable);
-
         }
 
         else if (TryComp<OrganComponent>(cyberwareComp.Owner, out var organComp)
@@ -71,6 +71,7 @@ public sealed class CyberwareAddActionServerSystem : CyberwareAddActionSystem
 
         DirtyEntity(uid);
     }
+
     private void UpdateComponents(CyberwareComponent cyberwareComp, CyberwareAddActionComponent comp, EntityUid target, bool enable)
     {
         if (enable)
