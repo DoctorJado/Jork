@@ -307,6 +307,17 @@
   - type: HandsFill
     hands:
       multitool: OmnimedToolAutodoc
+  - type: DoAfter
+  - type: Item
+    size: Small
+
+- type: entity
+  id: DisposableAutodocSyndicateCoprocessor
+  parent: DisposableAutodocBase
+  name: "disposable autodoc: syndicate coprocessor"
+  components:
+  - type: HandsFill
+    hands:
       surgery_specific: OrganCyberneticSyndicateCoprocessor
   - type: DisposableAutodoc
     surgerySteps:
@@ -319,5 +330,5 @@
     - surgery: SurgeryCloseIncision
       part: 2
   - type: Sprite
-    sprite: _DEN/Mobs/Organs/cyberware.rsi
-    state: deck5
+    sprite: Mobs/Species/Human/organs.rsi
+    state: tongue
