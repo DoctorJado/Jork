@@ -1,8 +1,11 @@
-﻿using Content.Shared._DEN.Cyberware.Components;
+﻿using System.Diagnostics;
+using Content.Shared._DEN.Cyberware.Components;
+using Content.Shared._DV.CustomObjectiveSummary;
 using Content.Shared._Shitmed.Autodoc.Systems;
 using Content.Shared._Shitmed.Medical.Surgery;
 using Content.Shared._Shitmed.Medical.Surgery.Steps;
 using Content.Shared.Body.Components;
+using Content.Shared.Body.Part;
 using Content.Shared.Database;
 using Content.Shared.Interaction.Events;
 using Content.Shared.Prying.Components;
@@ -29,6 +32,7 @@ public sealed class DisposableAutodocSystem : EntitySystem
         SubscribeLocalEvent<DisposableAutodocComponent, UseInHandEvent>(OnUseInHand);
 
         SubscribeLocalEvent<DisposableAutodocComponent, SurgeryStepEvent>(OnSurgeryStep);
+        SubscribeLocalEvent<DisposableAutodocComponent, BodyPartRemovedEvent>(OnPartRemoved);
     }
 
     public override void Update(float frameTime)
@@ -103,17 +107,18 @@ public sealed class DisposableAutodocSystem : EntitySystem
 
     private bool TryActivateAutodoc(Entity<DisposableAutodocComponent> self, EntityUid user)
     {
-        Logger.Debug("tryactivate autodoc");
-
-        if(self.Comp.SurgerySteps.Count == self.Comp.CurrentStep)
+        if (self.Comp.SurgerySteps.Count == self.Comp.CurrentStep)
             return true;
-
-        if (self.Comp.Waiting)
-            return false;
 
         var step = self.Comp.SurgerySteps[self.Comp.CurrentStep];
 
-        if (_autodocSystem.FindPart(user, step.Part, step.Symmetry) is not {} part)
+        if (_autodocSystem.FindPart(user, step.Part, step.Symmetry) is not { } part)
+        {
+            self.Comp.CurrentStep++;
+            return false;
+        }
+
+        if (self.Comp.Waiting)
             return false;
 
         if (StartSurgery(self, user, part, step.Surgery))
@@ -157,7 +162,12 @@ public sealed class DisposableAutodocSystem : EntitySystem
         if (args.Complete || !repeatable)
         {
             self.Comp.Waiting = false; // try the next autodoc or surgery step
-            return;
         }
+    }
+
+    private void OnPartRemoved(Entity<DisposableAutodocComponent> self, ref BodyPartRemovedEvent args)
+    {
+        Logger.Debug("part removed");
+        self.Comp.Waiting = false;
     }
 }

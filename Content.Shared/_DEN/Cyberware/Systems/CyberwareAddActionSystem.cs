@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Linq;
 using Content.Shared._DEN.Cyberware.Components;
 using Content.Shared._Shitmed.Body.Events;
 using Content.Shared.Actions;
@@ -7,6 +8,7 @@ using Content.Shared.Body.Events;
 using Content.Shared.Body.Part;
 using Content.Shared.Popups;
 using Robust.Shared.Network;
+using Robust.Shared.Prototypes;
 
 
 namespace Content.Shared._DEN.Cyberware.Systems;
@@ -16,7 +18,7 @@ public abstract class CyberwareAddActionSystem : EntitySystem
 {
     [Dependency] private readonly INetManager _net = default!;
     [Dependency] private readonly SharedActionsSystem _actionsSystem = default!;
-    [Dependency] private CyberwareSystem _cyberwareSystem = default!;
+    [Dependency] private readonly CyberwareSystem _cyberwareSystem = default!;
 
     public override void Initialize()
     {
@@ -34,7 +36,9 @@ public abstract class CyberwareAddActionSystem : EntitySystem
 
         _cyberwareSystem.UpdateComplexityTotal(cyberwareComp, component.TargetEntity.Value, true);
 
-        if (!string.IsNullOrWhiteSpace(component.CyberwareAction))
+        //TODO: kill this with hammers and add a dictionary of added actions to the CyberwareCapableComponent
+        if (!string.IsNullOrWhiteSpace(component.CyberwareAction) && !_actionsSystem.GetActions(component.TargetEntity.Value)
+            .Any(a => a.Id == component.Action))
         {
             _actionsSystem.AddAction(component.TargetEntity.Value, ref component.Action, component.CyberwareAction, uid);
         }
@@ -48,6 +52,9 @@ public abstract class CyberwareAddActionSystem : EntitySystem
         _cyberwareSystem.UpdateComplexityTotal(cyberwareComp, component.TargetEntity.Value, false);
 
         _actionsSystem.RemoveAction(component.Action);
+
+        var evt = new GenericCyberwareDisabledEvent();
+        RaiseLocalEvent(uid, ref evt);
     }
 
     private void OnCyberwareInstall(EntityUid uid, CyberwareAddActionComponent component, CyberwareInstalledEvent ev)

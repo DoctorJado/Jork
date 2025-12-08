@@ -15,11 +15,15 @@ public sealed class CyberwareAddActionServerSystem : CyberwareAddActionSystem
     [Dependency] private CyberwareSystem _cyberwareSystem = default!;
     [Dependency] private SimpleCyberwareSystem _simpleCyberwareSystem = default!;
     [Dependency] private readonly PopupSystem _popup = default!;
+
     public override void Initialize()
     {
         base.Initialize();
 
-        SubscribeLocalEvent<CyberwareAddActionComponent, ActivateActionToggleGenericCyberwareEvent>(OnToggleGenericCyberware);
+        SubscribeLocalEvent<CyberwareAddActionComponent, ActivateActionToggleGenericCyberwareEvent>(
+            OnToggleGenericCyberware);
+        SubscribeLocalEvent<CyberwareAddActionComponent, GenericCyberwareEnabledEvent>(OnGenericCyberwareEnabled);
+        SubscribeLocalEvent<CyberwareAddActionComponent, GenericCyberwareDisabledEvent>(OnGenericCyberwareDisabled);
     }
 
     private void OnToggleGenericCyberware(
@@ -28,23 +32,43 @@ public sealed class CyberwareAddActionServerSystem : CyberwareAddActionSystem
         ActivateActionToggleGenericCyberwareEvent ev
     )
     {
-        if(comp.TargetEntity is null)
+        if (comp.TargetEntity is null)
             return;
 
         if (comp.EnabledState)
-        {
-            ChangeAddState(uid, comp, false);
-            comp.EnabledState = false;
-            if(comp.CyberwareDisabledPopupText is not null)
-                _popup.PopupEntity(Loc.GetString(comp.CyberwareDisabledPopupText), comp.TargetEntity.Value, comp.TargetEntity.Value);
-        }
+            DisableGenericCyberware(uid, comp);
         else
-        {
-            ChangeAddState(uid, comp, true);
-            comp.EnabledState = true;
-            if(comp.CyberwareEnabledPopupText is not null)
-                _popup.PopupEntity(Loc.GetString(comp.CyberwareEnabledPopupText), comp.TargetEntity.Value, comp.TargetEntity.Value);
-        }
+            EnableGenericCyberware(uid, comp);
+    }
+
+    private void OnGenericCyberwareEnabled(EntityUid uid, CyberwareAddActionComponent comp, GenericCyberwareEnabledEvent ev) => EnableGenericCyberware(uid, comp);
+
+    private void OnGenericCyberwareDisabled(EntityUid uid, CyberwareAddActionComponent comp, GenericCyberwareDisabledEvent ev) => DisableGenericCyberware(uid, comp);
+
+    private void EnableGenericCyberware(EntityUid uid, CyberwareAddActionComponent comp)
+    {
+        if (comp.TargetEntity is null)
+            return;
+
+        ChangeAddState(uid, comp, true);
+        comp.EnabledState = true;
+        if (comp.CyberwareEnabledPopupText is not null)
+            _popup.PopupEntity(Loc.GetString(comp.CyberwareEnabledPopupText),
+                comp.TargetEntity.Value,
+                comp.TargetEntity.Value);
+    }
+
+    private void DisableGenericCyberware(EntityUid uid, CyberwareAddActionComponent comp)
+    {
+        if (comp.TargetEntity is null)
+            return;
+
+        ChangeAddState(uid, comp, false);
+        comp.EnabledState = false;
+        if (comp.CyberwareDisabledPopupText is not null)
+            _popup.PopupEntity(Loc.GetString(comp.CyberwareDisabledPopupText),
+                comp.TargetEntity.Value,
+                comp.TargetEntity.Value);
     }
 
     // yes I know this is literally copy and pasted, but it's just nicer to have it here.

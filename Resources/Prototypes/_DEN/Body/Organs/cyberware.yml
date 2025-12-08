@@ -310,6 +310,7 @@
   - type: DoAfter
   - type: Item
     size: Small
+  - type: Sanitized
 
 - type: entity
   id: DisposableAutodocSyndicateCoprocessor
@@ -318,6 +319,7 @@
   components:
   - type: HandsFill
     hands:
+      multitool: OmnimedToolAutodoc
       surgery_specific: OrganCyberneticSyndicateCoprocessor
   - type: DisposableAutodoc
     surgerySteps:
@@ -329,6 +331,46 @@
       part: 2
     - surgery: SurgeryCloseIncision
       part: 2
+  - type: Sprite
+    sprite: Mobs/Species/Human/organs.rsi
+    state: tongue
+
+- type: entity
+  id: DisposableAutodocSyndicateLynxPaws
+  parent: DisposableAutodocBase
+  name: "disposable autodoc: syndicate lynx paws"
+  components:
+  - type: HandsFill
+    hands:
+      multitool: OmnimedToolAutodoc
+      surgery_specific: RightFootLynxPaws
+      extra_surgery_specific: LeftFootLynxPaws
+  - type: DisposableAutodoc
+    surgerySteps:
+    - surgery: SurgeryOpenIncision
+      part: 6
+      symmetry: 1
+    - surgery: SurgeryRemovePart
+      part: 6
+      symmetry: 1
+    - surgery: SurgeryOpenIncision
+      part: 5
+      symmetry: 1
+    - surgery: SurgeryAttachLeftFoot
+      part: 5
+      symmetry: 1
+    - surgery: SurgeryOpenIncision
+      part: 6
+      symmetry: 2
+    - surgery: SurgeryRemovePart
+      part: 6
+      symmetry: 2
+    - surgery: SurgeryOpenIncision
+      part: 5
+      symmetry: 2
+    - surgery: SurgeryAttachRightFoot
+      part: 5
+      symmetry: 2
   - type: Sprite
     sprite: Mobs/Species/Human/organs.rsi
     state: tongue
