@@ -10,6 +10,7 @@
 // SPDX-License-Identifier: MIT
 
 using Content.Shared.Body.Components;
+using Content.Shared.Body.Part;
 using Robust.Shared.Serialization;
 
 namespace Content.Shared.Body.Part
