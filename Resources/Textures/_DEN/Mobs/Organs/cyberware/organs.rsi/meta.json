@@ -1,0 +1,42 @@
+{
+    "version": 1,
+    "license": "CC-BY-SA-3.0",
+    "copyright": "Sprites taken from base Spacestation, or created by KekaniCreates",
+    "size": {
+        "x": 32,
+        "y": 32
+    },
+    "states": [
+        {
+            "name": "autobrewery"
+        },
+        {
+            "name": "cyberheart-off"
+        },
+        {
+            "name": "cyberheart-on",
+            "delays": [
+                [
+                    0.6,
+                    0.1,
+                    0.1
+                ]
+            ]
+        },
+        {
+            "name": "cyberliver"
+        },
+        {
+            "name": "cyberlungs"
+        },
+        {
+            "name": "cybertum"
+        },
+        {
+            "name": "filterliver"
+        },
+        {
+            "name": "firebreath"
+        }
+    ]
+}
