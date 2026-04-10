@@ -7,3 +7,7 @@
 - type: metabolizerType
   id: Detritivore
   name: metabolizer-type-detritivore
+
+- type: metabolizerType
+  id: AutoBrewery
+  name: metabolizer-type-autobrewery

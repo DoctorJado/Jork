@@ -1,0 +1,191 @@
+﻿- type: entity
+  id: BaseCyberneticOrganUnGibbable
+  parent: BaseItem
+  abstract: true
+  components:
+  - type: Sprite
+    sprite: Mobs/Species/Human/organs.rsi
+  - type: Organ
+
+  - type: entity
+    id: BaseCyberneticOrgan
+    parent: BaseCyberneticOrganUnGibbable
+    abstract: true
+    components:
+    - type: Gibbable
+
+  # Cyberware Coprocessors
+  - type: entity
+    id: OrganCyberneticBaseDeck
+    parent: BaseHumanOrgan
+    name: chunk of flesh
+    description: A mundane part of the skull. Useless.
+    components:
+    - type: Item
+      size: Small
+    - type: Sprite
+      sprite: Mobs/Species/Human/organs.rsi
+      state: tongue
+    - type: Organ
+      slotId: coprocessor # Our new super cool organ slot
+    - type: CyberwareCoprocessor
+
+  - type: entity
+    id: OrganCyberneticBaseDeckArachne
+    parent: BaseArachnidOrgan
+    name: chunk of flesh
+    description: A mundane part of the skull. Useless.
+    components:
+    - type: Item
+      size: Small
+    - type: Sprite
+      sprite: _DEN/Mobs/Organs/cyberware.rsi
+      state: arachnechunk
+    - type: Organ
+      slotId: coprocessor # Our new super cool organ slot
+    - type: CyberwareCoprocessor
+
+  - type: entity
+    id: OrganCyberneticBaseDeckDiona
+    parent: BaseDionaOrgan
+    name: chunk of leaves
+    description: A mundane part of a diona's "skull." Useless.
+    components:
+    - type: Item
+      size: Small
+    - type: Sprite
+      sprite: _DEN/Objects/Consumable/Food/burger_sequence.rsi
+      state: leaf
+    - type: Organ
+      slotId: coprocessor
+    - type: CyberwareCoprocessor
+
+  - type: entity
+    id: OrganCyberneticCivilianCoprocessor
+    parent: BaseCyberneticOrgan
+    name: civilian cyberware coprocessor
+    description: It processes cyberware sometimes.
+    components:
+    - type: Item
+      size: Tiny
+    - type: Sprite
+      sprite: _DEN/Mobs/Organs/cyberware.rsi
+      state: deck1
+    - type: Organ
+      slotId: coprocessor # Our new super cool organ slot
+    - type: Cyberware
+    - type: CyberwareCoprocessor
+      safeTolerance: 3
+      dangerTolerance: 4
+      maximumTolerance: 5
+
+  - type: entity
+    id: OrganCyberneticModestCoprocessor
+    parent: BaseCyberneticOrgan
+    name: modest cyberware coprocessor
+    description: It processes cyberware sometimes.
+    components:
+    - type: Item
+      size: Tiny
+    - type: Sprite
+      sprite: _DEN/Mobs/Organs/cyberware.rsi
+      state: deck2
+    - type: Organ
+      slotId: coprocessor
+    - type: Cyberware
+    - type: CyberwareCoprocessor
+      safeTolerance: 6
+      dangerTolerance: 7
+      maximumTolerance: 8
+
+  - type: entity
+    id: OrganCyberneticAdvancedCoprocessor
+    parent: BaseCyberneticOrgan
+    name: advanced cyberware coprocessor
+    description: It processes cyberware sometimes.
+    components:
+    - type: Item
+      size: Tiny
+    - type: Sprite
+      sprite: _DEN/Mobs/Organs/cyberware.rsi
+      state: deck3
+    - type: Organ
+      slotId: coprocessor
+    - type: Cyberware
+    - type: CyberwareCoprocessor
+      safeTolerance: 9
+      dangerTolerance: 10
+      maximumTolerance: 11
+
+  - type: entity
+    id: OrganCyberneticDebugCoprocessor
+    parent: BaseCyberneticOrgan
+    name: debug cyberware coprocessor
+    description: It processes cyberware sometimes.
+    components:
+    - type: Item
+      size: Tiny
+    - type: Sprite
+      sprite: _DEN/Mobs/Organs/cyberware.rsi
+      state: deck4
+    - type: Organ
+      slotId: coprocessor
+    - type: Cyberware
+    - type: CyberwareCoprocessor
+      safeTolerance: 256
+      dangerTolerance: 256
+      maximumTolerance: 256
+
+  - type: entity
+    id: OrganCyberneticSyndicateCoprocessor
+    parent: BaseCyberneticOrgan
+    name: syndicate cyberware coprocessor
+    description: It processes cyberware sometimes.
+    components:
+    - type: Item
+      size: Tiny
+    - type: Sprite
+      sprite: _DEN/Mobs/Organs/cyberware.rsi
+      state: deck5
+    - type: Organ
+      slotId: coprocessor
+    - type: Cyberware
+    - type: CyberwareCoprocessor
+      safeTolerance: 16
+      dangerTolerance: 17
+      maximumTolerance: 18
+
+  # Organs
+  - type: entity
+    id: OrganCyberneticAutoBreweryStomach
+    parent: BaseCyberneticOrgan
+    name: auto brewery stomach
+    description: Gross. This is hard to stomach.
+    components:
+    - type: Organ
+      slotId: stomach
+    - type: Stomach
+    - type: Sprite
+      sprite: _DEN/Mobs/Organs/cyberware.rsi
+      state: autobrewery
+    - type: SolutionContainerManager
+      solutions:
+        stomach:
+          maxVol: 50
+    - type: Cyberware
+      complexity: 1
+    - type: CyberwareCanEmp
+    - type: CyberwareStatic
+      addSelf: # Adds the components below when the cybernetic is online and powered
+      - type: Metabolizer
+        maxReagents: 3
+        metabolizerTypes: [Human, AutoBrewery]
+        groups:
+        - id: Food
+        - id: Drink
+      addBody:
+      - type: Prying
+        pryPowered: true
+        speedModifier: 3.5 # fast because strong
+        useSound:
+          path: /Audio/Items/crowbar.ogg

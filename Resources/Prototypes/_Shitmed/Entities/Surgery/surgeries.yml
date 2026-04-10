@@ -725,3 +725,44 @@
 #  - type: SurgeryMarkingCondition
 #    markingCategory: Tail
 #    matchString: FelinidTail
+
+# The Den - Cyberware
+- type: entity
+  parent: SurgeryBase
+  id: SurgeryRemoveCoprocessor
+  name: Remove Cybernetic Coprocessor
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Surgery
+    requirement: SurgeryOpenIncision
+    steps:
+    - SurgeryStepSawBones
+    - SurgeryStepClampInternalBleeders
+    - SurgeryStepRemoveOrgan
+  - type: SurgeryPartCondition
+    part: Head
+  - type: SurgeryOrganCondition
+    organ:
+    - type: CyberwareCoprocessor
+    slotId: coprocessor
+
+- type: entity
+  parent: SurgeryBase
+  id: SurgeryInsertCoprocessor
+  name: Insert Cybernetic Coprocessor
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Surgery
+    requirement: SurgeryOpenIncision
+    steps:
+    - SurgeryStepSawBones
+    - SurgeryStepInsertOrgan
+    - SurgeryStepSealOrganWound
+  - type: SurgeryPartCondition
+    part: Head
+  - type: SurgeryOrganCondition
+    organ:
+    - type: CyberwareCoprocessor
+    inverse: true
+    reattaching: true
+    slotId: coprocessor
