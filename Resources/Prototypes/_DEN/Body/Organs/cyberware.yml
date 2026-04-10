@@ -1,11 +1,11 @@
-﻿- type: entity
-  id: BaseCyberneticOrganUnGibbable
-  parent: BaseItem
-  abstract: true
-  components:
-  - type: Sprite
-    sprite: Mobs/Species/Human/organs.rsi
-  - type: Organ
+﻿  - type: entity
+    id: BaseCyberneticOrganUnGibbable
+    parent: BaseItem
+    abstract: true
+    components:
+    - type: Sprite
+      sprite: Mobs/Species/Human/organs.rsi
+    - type: Organ
 
   - type: entity
     id: BaseCyberneticOrgan
@@ -39,7 +39,7 @@
     - type: Item
       size: Small
     - type: Sprite
-      sprite: _DEN/Mobs/Organs/cyberware.rsi
+      sprite: _DEN/Mobs/Organs/cyberware/processors.rsi
       state: arachnechunk
     - type: Organ
       slotId: coprocessor # Our new super cool organ slot
@@ -69,7 +69,7 @@
     - type: Item
       size: Tiny
     - type: Sprite
-      sprite: _DEN/Mobs/Organs/cyberware.rsi
+      sprite: _DEN/Mobs/Organs/cyberware/processors.rsi
       state: deck1
     - type: Organ
       slotId: coprocessor # Our new super cool organ slot
@@ -88,7 +88,7 @@
     - type: Item
       size: Tiny
     - type: Sprite
-      sprite: _DEN/Mobs/Organs/cyberware.rsi
+      sprite: _DEN/Mobs/Organs/cyberware/processors.rsi
       state: deck2
     - type: Organ
       slotId: coprocessor
@@ -107,7 +107,7 @@
     - type: Item
       size: Tiny
     - type: Sprite
-      sprite: _DEN/Mobs/Organs/cyberware.rsi
+      sprite: _DEN/Mobs/Organs/cyberware/processors.rsi
       state: deck3
     - type: Organ
       slotId: coprocessor
@@ -126,7 +126,7 @@
     - type: Item
       size: Tiny
     - type: Sprite
-      sprite: _DEN/Mobs/Organs/cyberware.rsi
+      sprite: _DEN/Mobs/Organs/cyberware/processors.rsi
       state: deck4
     - type: Organ
       slotId: coprocessor
@@ -145,7 +145,7 @@
     - type: Item
       size: Tiny
     - type: Sprite
-      sprite: _DEN/Mobs/Organs/cyberware.rsi
+      sprite: _DEN/Mobs/Organs/cyberware/processors.rsi
       state: deck5
     - type: Organ
       slotId: coprocessor
@@ -166,7 +166,7 @@
       slotId: stomach
     - type: Stomach
     - type: Sprite
-      sprite: _DEN/Mobs/Organs/cyberware.rsi
+      sprite: _DEN/Mobs/Organs/cyberware/organs.rsi
       state: autobrewery
     - type: SolutionContainerManager
       solutions:
@@ -174,7 +174,7 @@
           maxVol: 50
     - type: Cyberware
       complexity: 1
-    - type: CyberwareCanEmp
+    # - type: CyberwareCanEmp
     - type: CyberwareStatic
       addSelf: # Adds the components below when the cybernetic is online and powered
       - type: Metabolizer

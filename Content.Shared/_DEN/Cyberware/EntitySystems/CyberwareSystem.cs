@@ -29,14 +29,14 @@ public sealed class CyberwareSystem : EntitySystem
     {
         comp.RootEntity = e.Body;
 
+        var manager = EnsureComp<CyberwareManagerComponent>(e.Body);
+        manager.InstalledCyberware.Add(uid);
+        UpdateComplexityTotal((uid, comp), (e.Body, manager), true);
+
         var evt = new CyberwareInstalledEvent();
         RaiseLocalEvent(uid, ref evt);
         if(_cyberwareManagerSystem.HasCoprocessor(e.Body, out _))
             RaiseLocalEvent(e.Body, ref evt);
-
-        var manager = EnsureComp<CyberwareManagerComponent>(e.Body);
-        manager.InstalledCyberware.Add(uid);
-        UpdateComplexityTotal((uid, comp), (e.Body, manager), true);
     }
 
     private void OnOrganRemovedFromBody(EntityUid uid, CyberwareComponent comp, OrganRemovedFromBodyEvent e)
@@ -62,14 +62,14 @@ public sealed class CyberwareSystem : EntitySystem
 
         cyberwareComp.RootEntity = uid;
 
+        var manager = EnsureComp<CyberwareManagerComponent>(uid);
+        manager.InstalledCyberware.Add(uid);
+        UpdateComplexityTotal((e.Part, cyberwareComp), (uid, manager), true);
+
         var evt = new CyberwareInstalledEvent();
         RaiseLocalEvent(e.Part, ref evt);
         if(_cyberwareManagerSystem.HasCoprocessor(uid, out _))
             RaiseLocalEvent(uid, ref evt);
-
-        var manager = EnsureComp<CyberwareManagerComponent>(uid);
-        manager.InstalledCyberware.Add(uid);
-        UpdateComplexityTotal((e.Part, cyberwareComp), (uid, manager), true);
     }
 
     private void OnPartRemovedFromBody(EntityUid uid, BodyComponent comp, BodyPartDroppedEvent e)

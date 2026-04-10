@@ -1,4 +1,5 @@
-﻿using Content.Shared._DEN.Cyberware.Components;
+﻿using System.Linq;
+using Content.Shared._DEN.Cyberware.Components;
 
 
 namespace Content.Shared._DEN.Cyberware.EntitySystems;
@@ -19,11 +20,13 @@ public sealed class CyberwareManagerSystem : EntitySystem
 
     public bool HasCoprocessor(EntityUid uid, out EntityUid coprocessorUid)
     {
+        Logger.Debug("coprocessor check");
         coprocessorUid = default;
 
         if (!TryComp<CyberwareManagerComponent>(uid, out var comp) || comp.CoprocessorUid is null)
             return false;
 
+        Logger.Debug("coprocessor found");
         coprocessorUid = comp.CoprocessorUid.Value;
 
         return true;
@@ -31,7 +34,7 @@ public sealed class CyberwareManagerSystem : EntitySystem
 
     private void OnCoprocessorInstall(EntityUid uid, CyberwareManagerComponent comp, CyberwareCoprocessorInstalledEvent e)
     {
-        comp.CoprocessorUid = e.Cyberware;
+        comp.CoprocessorUid = uid;
         EnableAllCyberware(uid, comp);
     }
 
@@ -41,14 +44,17 @@ public sealed class CyberwareManagerSystem : EntitySystem
         DisableAllCyberware(uid, comp);
     }
 
+    // TODO: kill these with hammers, must find better way to enable self when coprocessor is already installed
     private void OnCyberwareInstall(EntityUid uid, CyberwareManagerComponent comp, CyberwareInstalledEvent e)
     {
-        EnableCyberware(uid);
+        Logger.Debug("enabling cyberware: " + uid);
+        EnableCyberware(comp.InstalledCyberware.Last());
     }
 
     private void OnCyberwareRemove(EntityUid uid, CyberwareManagerComponent comp, CyberwareRemovedEvent e)
     {
-        DisableCyberware(uid);
+        Logger.Debug("disabling cyberware: " + uid);
+        DisableCyberware(comp.InstalledCyberware.Last());
         EnableAllCyberware(uid, comp);
     }
 
@@ -77,6 +83,7 @@ public sealed class CyberwareManagerSystem : EntitySystem
 
         var evt = new CyberwareEnabledEvent();
         RaiseLocalEvent(uid, ref evt);
+        DirtyEntity(uid);
     }
 
     private void DisableCyberware(EntityUid uid)
@@ -88,5 +95,6 @@ public sealed class CyberwareManagerSystem : EntitySystem
 
         var evt = new CyberwareDisabledEvent();
         RaiseLocalEvent(uid, ref evt);
+        DirtyEntity(uid);
     }
 }

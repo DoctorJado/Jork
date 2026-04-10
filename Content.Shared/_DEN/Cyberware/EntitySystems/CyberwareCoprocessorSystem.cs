@@ -15,14 +15,14 @@ public sealed class CyberwareCoprocessorSystem : EntitySystem
         SubscribeLocalEvent<CyberwareCoprocessorComponent, OrganRemovedFromBodyEvent>(OnCoprocessorRemoved);
     }
 
-    private void OnCoprocessorAdded(EntityUid uid, CyberwareCoprocessorComponent component, OrganAddedToBodyEvent e)
+    private void OnCoprocessorAdded(EntityUid uid, CyberwareCoprocessorComponent comp, OrganAddedToBodyEvent e)
     {
-        var evt = new CyberwareCoprocessorInstalledEvent();
+        var evt = new CyberwareCoprocessorInstalledEvent((uid, comp));
         RaiseLocalEvent(e.Body, ref evt);
     }
-    private void OnCoprocessorRemoved(EntityUid uid, CyberwareCoprocessorComponent component, OrganRemovedFromBodyEvent e)
+    private void OnCoprocessorRemoved(EntityUid uid, CyberwareCoprocessorComponent comp, OrganRemovedFromBodyEvent e)
     {
-        var evt = new CyberwareCoprocessorRemovedEvent();
+        var evt = new CyberwareCoprocessorRemovedEvent((uid, comp));
         RaiseLocalEvent(e.OldBody, ref evt);
     }
 }
