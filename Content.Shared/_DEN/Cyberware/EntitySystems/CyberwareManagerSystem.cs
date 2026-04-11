@@ -18,6 +18,12 @@ public sealed class CyberwareManagerSystem : EntitySystem
         SubscribeLocalEvent<CyberwareManagerComponent, CyberwareRemovedEvent>(OnCyberwareRemove);
     }
 
+    /// <summary>
+    /// Check if entity has a coprocessor installed, and return the coprocessor EntityUid
+    /// </summary>
+    /// <param name="uid"></param>
+    /// <param name="coprocessorUid"></param>
+    /// <returns></returns>
     public bool HasCoprocessor(EntityUid uid, out EntityUid coprocessorUid)
     {
         Logger.Debug("coprocessor check");
@@ -44,17 +50,14 @@ public sealed class CyberwareManagerSystem : EntitySystem
         DisableAllCyberware(uid, comp);
     }
 
-    // TODO: kill these with hammers, must find better way to enable self when coprocessor is already installed
     private void OnCyberwareInstall(EntityUid uid, CyberwareManagerComponent comp, CyberwareInstalledEvent e)
     {
-        Logger.Debug("enabling cyberware: " + uid);
-        EnableCyberware(comp.InstalledCyberware.Last());
+        EnableCyberware(e.Cyberware);
     }
 
     private void OnCyberwareRemove(EntityUid uid, CyberwareManagerComponent comp, CyberwareRemovedEvent e)
     {
-        Logger.Debug("disabling cyberware: " + uid);
-        DisableCyberware(comp.InstalledCyberware.Last());
+        DisableCyberware(e.Cyberware);
         EnableAllCyberware(uid, comp);
     }
 

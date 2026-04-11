@@ -33,10 +33,10 @@ public sealed class CyberwareSystem : EntitySystem
         manager.InstalledCyberware.Add(uid);
         UpdateComplexityTotal((uid, comp), (e.Body, manager), true);
 
-        var evt = new CyberwareInstalledEvent();
-        RaiseLocalEvent(uid, ref evt);
+        var evt = new CyberwareInstalledEvent((uid, comp));
+        RaiseLocalEvent(uid, ref evt); // send event to part
         if(_cyberwareManagerSystem.HasCoprocessor(e.Body, out _))
-            RaiseLocalEvent(e.Body, ref evt);
+            RaiseLocalEvent(e.Body, ref evt); // send event to cyberware manager
     }
 
     private void OnOrganRemovedFromBody(EntityUid uid, CyberwareComponent comp, OrganRemovedFromBodyEvent e)
@@ -49,10 +49,10 @@ public sealed class CyberwareSystem : EntitySystem
         manager.InstalledCyberware.Remove(uid);
         UpdateComplexityTotal((uid, comp), (e.OldBody, manager), false);
 
-        var evt = new CyberwareRemovedEvent();
-        RaiseLocalEvent(uid, ref evt);
+        var evt = new CyberwareRemovedEvent((uid, comp));
+        RaiseLocalEvent(uid, ref evt); // send event to part
         if(_cyberwareManagerSystem.HasCoprocessor(e.OldBody, out _))
-            RaiseLocalEvent(e.OldBody, ref evt);
+            RaiseLocalEvent(e.OldBody, ref evt); // send event to cyberware manager
     }
 
     private void OnPartAddedToBody(EntityUid uid, BodyComponent comp, BodyPartAttachedEvent e)
@@ -66,10 +66,10 @@ public sealed class CyberwareSystem : EntitySystem
         manager.InstalledCyberware.Add(uid);
         UpdateComplexityTotal((e.Part, cyberwareComp), (uid, manager), true);
 
-        var evt = new CyberwareInstalledEvent();
-        RaiseLocalEvent(e.Part, ref evt);
+        var evt = new CyberwareInstalledEvent((e.Part, cyberwareComp));
+        RaiseLocalEvent(e.Part, ref evt); // send event to part
         if(_cyberwareManagerSystem.HasCoprocessor(uid, out _))
-            RaiseLocalEvent(uid, ref evt);
+            RaiseLocalEvent(uid, ref evt); // send event to cyberware manager
     }
 
     private void OnPartRemovedFromBody(EntityUid uid, BodyComponent comp, BodyPartDroppedEvent e)
@@ -85,10 +85,10 @@ public sealed class CyberwareSystem : EntitySystem
         manager.InstalledCyberware.Remove(uid);
         UpdateComplexityTotal((e.Part, cyberwareComp), (uid, manager), false);
 
-        var evt = new CyberwareRemovedEvent();
-        RaiseLocalEvent(e.Part, ref evt);
+        var evt = new CyberwareRemovedEvent((e.Part, cyberwareComp));
+        RaiseLocalEvent(e.Part, ref evt); // send event to part
         if(_cyberwareManagerSystem.HasCoprocessor(uid, out _))
-            RaiseLocalEvent(uid, ref evt);
+            RaiseLocalEvent(uid, ref evt); // send event to cyberware manager
     }
 
     private void UpdateComplexityTotal(Entity<CyberwareComponent> cyberwareEnt, Entity<CyberwareManagerComponent> managerEnt, bool enabled)
@@ -104,23 +104,3 @@ public sealed class CyberwareSystem : EntitySystem
     }
 }
 
-[ByRefEvent]
-public readonly record struct CyberwareComplexityTotalChange(Entity<CyberwareManagerComponent> Cyberware);
-
-[ByRefEvent]
-public readonly record struct CyberwareInstalledEvent();
-
-[ByRefEvent]
-public readonly record struct CyberwareRemovedEvent();
-
-[ByRefEvent]
-public readonly record struct CyberwareEnabledEvent();
-
-[ByRefEvent]
-public sealed class CyberwareAttemptEnabledEvent() : CancellableEntityEventArgs;
-
-[ByRefEvent]
-public readonly record struct CyberwareDisabledEvent();
-
-[ByRefEvent]
-public sealed class CyberwareAttemptDisabledEvent() : CancellableEntityEventArgs;

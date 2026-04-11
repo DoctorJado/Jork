@@ -12,4 +12,10 @@ public sealed partial class CyberwareStaticComponent : Component
 
     [DataField, AlwaysPushInheritance]
     public ComponentRegistry? AddBody;
+
+    /// <summary>
+    /// NOTE: is an indicator, not a control variable
+    /// </summary>
+    [DataField]
+    public bool IsEnabled = false;
 }

@@ -20,6 +20,7 @@ public sealed class CyberwareCoprocessorSystem : EntitySystem
         var evt = new CyberwareCoprocessorInstalledEvent((uid, comp));
         RaiseLocalEvent(e.Body, ref evt);
     }
+
     private void OnCoprocessorRemoved(EntityUid uid, CyberwareCoprocessorComponent comp, OrganRemovedFromBodyEvent e)
     {
         var evt = new CyberwareCoprocessorRemovedEvent((uid, comp));
@@ -27,8 +28,3 @@ public sealed class CyberwareCoprocessorSystem : EntitySystem
     }
 }
 
-[ByRefEvent]
-public readonly record struct CyberwareCoprocessorInstalledEvent(Entity<CyberwareCoprocessorComponent> Cyberware);
-
-[ByRefEvent]
-public readonly record struct CyberwareCoprocessorRemovedEvent(Entity<CyberwareCoprocessorComponent> Cyberware);

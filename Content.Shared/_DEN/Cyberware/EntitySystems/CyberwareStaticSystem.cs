@@ -26,6 +26,8 @@ public sealed class CyberwareStaticSystem : EntitySystem
             && TryComp<CyberwareComponent>(uid, out var cyberwareComp)
             && cyberwareComp.RootEntity is not null)
             AddComponents(cyberwareComp.RootEntity.Value, comp.AddBody);
+
+        comp.IsEnabled = true;
     }
 
     private void OnCyberwareDisable(EntityUid uid, CyberwareStaticComponent comp, CyberwareDisabledEvent e)
@@ -37,6 +39,8 @@ public sealed class CyberwareStaticSystem : EntitySystem
             && TryComp<CyberwareComponent>(uid, out var cyberwareComp)
             && cyberwareComp.RootEntity is not null)
             RemoveComponents(cyberwareComp.RootEntity.Value, comp.AddBody);
+
+        comp.IsEnabled = false;
     }
 
     private void AddComponents(EntityUid target,
@@ -50,7 +54,6 @@ public sealed class CyberwareStaticSystem : EntitySystem
 
             var newComp = (Component) _serManager.CreateCopy(comp.Component, notNullableOverride: true);
             EntityManager.AddComponent(target, newComp, true);
-            Logger.Debug("adding component " + newComp.ToString());
         }
     }
 
@@ -60,7 +63,6 @@ public sealed class CyberwareStaticSystem : EntitySystem
         foreach (var (key, comp) in reg)
         {
             EntityManager.RemoveComponent(target, comp.Component.GetType());
-            Logger.Debug("removing component " + comp.Component.GetType());
         }
     }
 }
